@@ -1,0 +1,18 @@
+{
+  "manifest_version": 2,
+
+  "name": "CMI Internet Speed Project 0.1",
+  "description": "Collect statistics and upload to server anonymously",
+  "version": "0.1",
+  "browser_action": {
+    "default_icon": "logo.png",
+    "default_title": "Anonymously monitored by CMI Internet Speed Project"
+  },
+  "permissions": [
+    "webNavigation", "storage", "declarativeContent", "https://*/*", "http://*/*", "tabs"
+  ],
+  "background": {
+    "scripts": ["statcollector.js", "background.js"],
+    "persistent": false
+  }
+}
