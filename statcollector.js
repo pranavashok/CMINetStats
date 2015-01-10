@@ -45,48 +45,55 @@ NavigationCollector.prototype = {
 	        sendResponse({});
 	},
 
-	createPending_: function(s, data, e) {
+	createPending_: function(s, data, eve, error) {
 		this.pending_ = {};
 		this.pending_["id"] = data.tabId + '-' + String(data.timeStamp).substr(0,13);
 		this.pending_["timestamp"] = data.timeStamp;
 		this.pending_["url"] = data.url;
 		this.pending_["timing"] = JSON.parse(s);
-		this.pending_["state"] = e;
-		this.pending_["timing"]["duration"] = (e == "onDOMContentLoaded" ? (this.pending_["timing"]["domInteractive"] - this.pending_["timing"]["navigationStart"]) : (this.pending_["timing"]["loadEventEnd"] - this.pending_["timing"]["navigationStart"]));
-		this.pending_["error"] = 0;
-		//console.log(this.pending_);
-		if(e == "onCompleted") {
-			this.completed_ = this.completed_ || [];
-			this.completed_[this.pending_["id"]] = [];
-			this.completed_[this.pending_["id"]] = this.pending_;
-			this.saveDataStorage_();
-			delete this.pending_;
+		this.pending_["state"] = eve;
+		this.pending_["error"] = 1;
+		
+		if(error != 1) { //If not error
+			this.pending_["timing"]["duration"] = (eve == "onDOMContentLoaded" ? (this.pending_["timing"]["domInteractive"] - this.pending_["timing"]["navigationStart"]) : (this.pending_["timing"]["loadEventEnd"] - this.pending_["timing"]["navigationStart"]));
+			this.pending_["error"] = 0;
 		}
+
+		if(eve == "onCompleted")
+			this.pushToCompleted_(this.pending_);
+		else
+			this.pushToErrored_(this.pending_);
+	},
+
+	pushToCompleted_: function(pending) {
+		this.completed_ = this.completed_ || [];
+		this.completed_[this.pending_["id"]] = [];
+		this.completed_[this.pending_["id"]] = this.pending_;
+		this.saveDataStorage_();
+		delete this.pending_;
+	},
+
+	pushToErrored_: function(pending) {
+		this.errored_ = this.errored_ || [];
+		this.errored_[this.pending_["id"]] = [];
+		this.errored_[this.pending_["id"]] = this.pending_;
+		this.saveDataStorage_();
+		delete this.pending_;
 	},
 
 	storeTimingData: function(data, e) {
 		if(data.frameId != 0)
 				return;
-		if(e == "onCompleted" /*|| e == "onDOMContentLoaded"*/) {
+		if(e != "onErrorOccurred") {
 			var self = this;
-			chrome.tabs.executeScript(data.tabId, 
-				{code: '(function() {var j = new Array(); var t = window.performance; j = t.timing; return (JSON.stringify(j));})();'},
+			chrome.tabs.executeScript(data.tabId, {code: '(function() {var j = new Array(); var t = window.performance; j = t.timing; return (JSON.stringify(j));})();'},
 				function(s) {
-				self.createPending_.call(self, s, data, e);
-			});
+					self.createPending_.call(self, s, data, e, 0);
+				}
+			);
 		}
-		else {
-			this.pending_ = {};
-			this.pending_["error"] = 0;
-			this.pending_["id"] = data.tabId + '-' + String(data.timeStamp).substr(0,13);
-			this.pending_["url"] = data.url;
-			this.pending_["timestamp"] = data.timeStamp;
-			//console.log(this.pending_);
-			if(e == "onErrorOccurred") {
-				this.errored_.push(this.pending_);
-				this.saveDataStorage_();
-				delete this.pending_;
-			}
+		else { //onErrorOccurred
+			self.createPending_.call(self, {}, data, e, 1);
 		}
 	},
 
