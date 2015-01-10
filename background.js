@@ -24,5 +24,6 @@ chrome.runtime.onStartup.addListener(function() {
 
 chrome.browserAction.onClicked.addListener(function(tab) {
 	var timing = nav.getTimingData();
+	nav.sendLogsToServer(timing, "http://localhost/netdata.php");
 	console.log(timing);
 });

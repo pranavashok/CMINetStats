@@ -100,5 +100,15 @@ NavigationCollector.prototype = {
 	getTimingData: function() {
 		this.loadDataStorage_();
 		return this.completed_;
+	},
+
+	sendLogsToServer: function(logs, url) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+		xhr.send(JSON.stringify(logs));
+		xhr.onloadend = function () {
+    		console.log("Sent logs to server");
+  		};
 	}
 };
