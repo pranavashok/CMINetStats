@@ -107,8 +107,11 @@ NavigationCollector.prototype = {
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		xhr.send(JSON.stringify(logs));
+		var self = this;
 		xhr.onloadend = function () {
     		console.log("Sent logs to server");
+    		self.resetDataStorage();
+    		console.log("Cleared local storage");
   		};
 	}
 };
