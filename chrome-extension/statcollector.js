@@ -47,16 +47,16 @@ NavigationCollector.prototype = {
 
 	createPending_: function(s, data, eve, error) {
 		this.pending_ = {};
-		this.pending_["id"] = data.tabId + '-' + String(data.timeStamp).substr(0,13);
-		this.pending_["timestamp"] = data.timeStamp;
-		this.pending_["url"] = data.url;
-		this.pending_["timing"] = JSON.parse(s);
-		this.pending_["state"] = eve;
-		this.pending_["error"] = 1;
+		this.pending_.id = data.tabId + '-' + String(data.timeStamp).substr(0,13);
+		this.pending_.timestamp = data.timeStamp;
+		this.pending_.url = data.url;
+		this.pending_.timing = JSON.parse(s);
+		this.pending_.state = eve;
+		this.pending_.error = 1;
 		
 		if(error != 1) { //If not error
-			this.pending_["timing"]["duration"] = (eve == "onDOMContentLoaded" ? (this.pending_["timing"]["domInteractive"] - this.pending_["timing"]["navigationStart"]) : (this.pending_["timing"]["loadEventEnd"] - this.pending_["timing"]["navigationStart"]));
-			this.pending_["error"] = 0;
+			this.pending_.timing.duration = (eve == "onDOMContentLoaded" ? (this.pending_.timing.domInteractive - this.pending_.timing.navigationStart) : (this.pending_.timing.loadEventEnd - this.pending_.timing.navigationStart));
+			this.pending_.error = 0;
 		}
 
 		if(eve == "onCompleted")
@@ -67,22 +67,22 @@ NavigationCollector.prototype = {
 
 	pushToCompleted_: function(pending) {
 		this.completed_ = this.completed_ || [];
-		this.completed_[this.pending_["id"]] = [];
-		this.completed_[this.pending_["id"]] = this.pending_;
+		this.completed_[this.pending_.id] = [];
+		this.completed_[this.pending_.id] = this.pending_;
 		this.saveDataStorage_();
 		delete this.pending_;
 	},
 
 	pushToErrored_: function(pending) {
 		this.errored_ = this.errored_ || [];
-		this.errored_[this.pending_["id"]] = [];
-		this.errored_[this.pending_["id"]] = this.pending_;
+		this.errored_[this.pending_.id] = [];
+		this.errored_[this.pending_.id] = this.pending_;
 		this.saveDataStorage_();
 		delete this.pending_;
 	},
 
 	storeTimingData: function(data, e) {
-		if(data.frameId != 0)
+		if(data.frameId !== 0)
 				return;
 		if(e != "onErrorOccurred") {
 			var self = this;
@@ -93,7 +93,7 @@ NavigationCollector.prototype = {
 			);
 		}
 		else { //onErrorOccurred
-			self.createPending_.call(self, {}, data, e, 1);
+			this.createPending_({}, data, e, 1);
 		}
 	},
 
