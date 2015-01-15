@@ -24,6 +24,6 @@ chrome.runtime.onStartup.addListener(function() {
 
 chrome.browserAction.onClicked.addListener(function(tab) {
 	var timing = nav.getTimingData();
-	nav.sendLogsToServer(timing, "http://localhost/netdata.php");
+	nav.sendLogsToServer(timing, "http://pranavashok.com/cminetproject/receiver.php");
 	console.log(timing);
 });

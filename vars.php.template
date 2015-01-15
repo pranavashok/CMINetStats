@@ -1,0 +1,4 @@
+<?php
+//Uncomment the following line and change the location
+//$DUMP_LOCATION='SOME_DUMPFILE_LOCATION';
+?>
