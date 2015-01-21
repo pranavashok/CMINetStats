@@ -4,6 +4,9 @@
 #
 # 01 * * * * <script_dir>/cronping.sh 192.168.48.0/21 5
 #
+# Ensure that this script is executable by running 
+# chmod +x <script_dir>/cronping.sh
+#
 # This will make the script run every 1st minute of 
 # every hour. Make sure you remove the crontab entry 
 # after this project is over.
