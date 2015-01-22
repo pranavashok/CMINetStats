@@ -21,7 +21,7 @@ script_dir=/home/pranav
 echo "Starting nmap..."
 sudo nmap -sP -oG output.nmap $1 > $script_dir/pingstats/nmap.report
 echo "Getting mac addresses..."
-python $script_dir/pingstats/macgetter.py `date +%e' '%H` > $script_dir/pingstats/`date +%e%H`.mac
+python $script_dir/pingstats/macgetter.py `date +%e' '%H` $script_dir > $script_dir/pingstats/`date +%e%H`.mac
 grep -o -e '[0-9]*\.[0-9]*.[0-9]*\.[0-9]*' output.nmap | tr '\n' ' ' > input.nping
 echo "Starting nping..."
 sudo nping --icmp -c $2 `cat input.nping` > $script_dir/pingstats/`date +%e%H`

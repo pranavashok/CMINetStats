@@ -3,8 +3,10 @@ import sys
 
 day = sys.argv[1]
 hour = sys.argv[2]
+home = sys.argv[3]
+report = home+"/pingstats/nmap.report"
 
-f=open('nmap.report')
+f=open(report)
 
 content = f.read()
 
